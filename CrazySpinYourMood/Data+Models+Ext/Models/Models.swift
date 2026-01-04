@@ -52,4 +52,12 @@ struct MoodEntry: Identifiable, Codable {
     let date: Date
     let mood: Mood
     var note: String?
+    var habits: [String] = []
+}
+
+struct Badge: Identifiable {
+    let id: UUID = UUID()
+    let name: String
+    let requirement: Int
+    let icon: String
 }

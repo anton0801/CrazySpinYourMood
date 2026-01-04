@@ -14,6 +14,22 @@ struct StatsView: View {
         return counts.max(by: { $0.value < $1.value })?.key ?? "None"
     }
     
+    var mostCommonHabit: String {
+        let allHabits = history.flatMap { $0.habits }
+        let counts = Dictionary(grouping: allHabits, by: { $0 }).mapValues { $0.count }
+        return counts.max(by: { $0.value < $1.value })?.key ?? "None"
+    }
+        
+    let badges: [Badge] = [
+        Badge(name: "Daily Spinner", requirement: 1, icon: "star.fill"),
+        Badge(name: "Week Warrior", requirement: 7, icon: "trophy.fill"),
+        Badge(name: "Mood Master", requirement: 30, icon: "crown.fill")
+    ]
+    
+    var unlockedBadges: [Badge] {
+        badges.filter { bestStreak >= $0.requirement }
+    }
+    
     var bestStreak: Int {
         // Simple current streak calculation, assuming daily
         var streak = 1
@@ -42,17 +58,33 @@ struct StatsView: View {
             VStack(spacing: 20) {
                 StatCard(title: "Days Tracked", value: "\(daysTracked)")
                 StatCard(title: "Most Common Mood", value: mostCommonMood)
+                StatCard(title: "Most Common Habit", value: mostCommonHabit)
                 StatCard(title: "Best Mood Streak", value: "\(bestStreak) days")
                 StatCard(title: "Current Streak", value: "\(currentStreak) days")
                 
-                // Simple pie chart placeholder
                 Text("Mood Distribution")
                     .font(.headline)
                 MoodPieChart(history: history)
                 
+                Text("Achievements")
+                    .font(.headline)
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())]) {
+                    ForEach(unlockedBadges) { badge in
+                        VStack {
+                            Image(systemName: badge.icon)
+                                .font(.largeTitle)
+                                .foregroundColor(.yellow)
+                            Text(badge.name)
+                                .font(.caption)
+                        }
+                        .padding()
+                        .background(Color.purple.opacity(0.2))
+                        .cornerRadius(10)
+                    }
+                }
+                
                 Text("Mood Over Weeks")
                     .font(.headline)
-                // Line chart placeholder
                 Text("Graph placeholder")
             }
             .padding()

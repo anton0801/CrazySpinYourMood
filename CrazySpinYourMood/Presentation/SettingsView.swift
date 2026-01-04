@@ -5,8 +5,9 @@ struct SettingsView: View {
     @AppStorage("theme") private var theme: String = "Bright"
     @AppStorage("soundEnabled") private var soundEnabled: Bool = true
     @AppStorage("reminderEnabled") private var reminderEnabled: Bool = false
+    @AppStorage("moodHistory") private var moodHistoryData: Data = Data()
     @State var reminderTime: Date = Date()
-    @State var moodHistoryData: Data = Data()
+    // @State var moodHistoryData: Data = Data()
     
     var body: some View {
         Form {

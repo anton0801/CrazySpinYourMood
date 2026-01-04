@@ -5,30 +5,54 @@ import SwiftUI
 struct HistoryView: View {
     @AppStorage("moodHistory") private var moodHistoryData: Data = Data()
     @State private var history: [MoodEntry] = []
+    @State private var searchText: String = ""
+    
+    var filteredHistory: [MoodEntry] {
+        if searchText.isEmpty {
+            return history
+        } else {
+            return history.filter {
+                $0.mood.name.lowercased().contains(searchText.lowercased()) ||
+                ($0.note?.lowercased().contains(searchText.lowercased()) ?? false) ||
+                $0.habits.joined().lowercased().contains(searchText.lowercased())
+            }
+        }
+    }
     
     var body: some View {
         NavigationView {
-            List {
-                ForEach(history.sorted(by: { $0.date > $1.date })) { entry in
-                    NavigationLink(destination: DayDetailsView(entry: entry, onUpdate: updateEntry, onDelete: deleteEntry)) {
-                        HStack {
-                            Text(entry.mood.icon)
-                                .font(.title)
-                            VStack(alignment: .leading) {
-                                Text(entry.mood.name)
-                                    .font(.headline)
-                                Text(entry.date, style: .date)
-                                    .font(.subheadline)
-                                    .foregroundColor(.secondary)
+            VStack {
+                TextField("Search moods, notes, or habits", text: $searchText)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .padding()
+                
+                List {
+                    ForEach(filteredHistory.sorted(by: { $0.date > $1.date })) { entry in
+                        NavigationLink(destination: DayDetailsView(entry: entry, onUpdate: updateEntry, onDelete: deleteEntry)) {
+                            HStack {
+                                Text(entry.mood.icon)
+                                    .font(.title)
+                                VStack(alignment: .leading) {
+                                    Text(entry.mood.name)
+                                        .font(.headline)
+                                    Text(entry.date, style: .date)
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                    if !entry.habits.isEmpty {
+                                        Text(entry.habits.joined(separator: ", "))
+                                            .font(.caption)
+                                            .foregroundColor(.purple)
+                                    }
+                                }
+                                Spacer()
+                                Circle()
+                                    .fill(entry.mood.color)
+                                    .frame(width: 20, height: 20)
                             }
-                            Spacer()
-                            Circle()
-                                .fill(entry.mood.color)
-                                .frame(width: 20, height: 20)
                         }
                     }
+                    .onDelete(perform: delete)
                 }
-                .onDelete(perform: delete)
             }
             .navigationTitle("History")
             .onAppear {

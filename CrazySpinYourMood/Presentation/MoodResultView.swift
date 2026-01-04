@@ -42,21 +42,19 @@ struct MoodResultView: View {
             }
             .padding()
             .sheet(isPresented: $showAddNote) {
-                AddNoteView(mood: mood, onSave: { note in
-                    saveMood(mood, note: note)
+                AddNoteView(mood: mood) { note, habits in
+                    saveMood(mood, note: note, habits: habits)
                     showResult = false
-                })
+                }
             }
         }
     }
     
-    func saveMood(_ mood: Mood, note: String? = nil) {
+    func saveMood(_ mood: Mood, note: String? = nil, habits: [String] = []) {
         var history = loadHistory()
-        let entry = MoodEntry(date: Date(), mood: mood, note: note)
+        let entry = MoodEntry(date: Date(), mood: mood, note: note, habits: habits)
         history.append(entry)
-        if let data = try? JSONEncoder().encode(history) {
-            moodHistoryData = data
-        }
+        saveHistory(history)
     }
     
     func loadHistory() -> [MoodEntry] {
@@ -64,6 +62,13 @@ struct MoodResultView: View {
             return history
         }
         return []
+    }
+    
+}
+
+func saveHistory(_ history: [MoodEntry]) {
+    if let data = try? JSONEncoder().encode(history) {
+        UserDefaults.standard.set(data, forKey: "moodHistory")
     }
 }
 

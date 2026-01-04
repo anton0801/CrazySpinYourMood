@@ -1,9 +1,55 @@
 
 import SwiftUI
 
+//struct MoodWheel: View {
+//    @Binding var rotation: Double
+//    @Binding var selectedMood: Mood?
+//    
+//    let moods: [Mood] = [.happy, .calm, .focused, .tired, .stressed, .excited]
+//    
+//    var body: some View {
+//        GeometryReader { geometry in
+//            let radius = min(geometry.size.width, geometry.size.height) / 2
+//            ZStack {
+//                ForEach(0..<moods.count, id: \.self) { index in
+//                    let angle = Double(index) * (360.0 / Double(moods.count)) + (180.0 / Double(moods.count))
+//                    let offsetX = radius * 0.7 * cos(Angle(degrees: angle).radians)
+//                    let offsetY = radius * 0.7 * sin(Angle(degrees: angle).radians)
+//                    
+//                    Path { path in
+//                        let segmentAngle = 360.0 / Double(moods.count)
+//                        let startAngle = Double(index) * segmentAngle
+//                        let endAngle = startAngle + segmentAngle
+//                        
+//                        path.move(to: CGPoint(x: radius, y: radius))
+//                        path.addArc(center: CGPoint(x: radius, y: radius), radius: radius, startAngle: .degrees(startAngle), endAngle: .degrees(endAngle), clockwise: false)
+//                    }
+//                    .fill(moods[index].color.gradient)
+//                    .overlay {
+//                        Text(moods[index].icon)
+//                            .font(.largeTitle)
+//                            .offset(x: offsetX, y: offsetY)
+//                    }
+//                }
+//                .rotationEffect(.degrees(rotation))
+//                
+//                // Arrow
+//                Triangle()
+//                    .fill(Color.white)
+//                    .frame(width: 20, height: 40)
+//                    .offset(y: radius - 20)
+//                    .shadow(color: .yellow.opacity(0.8), radius: 5)
+//                    .rotationEffect(.degrees(180))
+//            }
+//            .frame(width: geometry.size.width, height: geometry.size.height)
+//        }
+//    }
+//}
+
 struct MoodWheel: View {
     @Binding var rotation: Double
     @Binding var selectedMood: Mood?
+    @State private var pulseScale: CGFloat = 1.0
     
     let moods: [Mood] = [.happy, .calm, .focused, .tired, .stressed, .excited]
     
@@ -33,15 +79,25 @@ struct MoodWheel: View {
                 }
                 .rotationEffect(.degrees(rotation))
                 
-                // Arrow
                 Triangle()
                     .fill(Color.white)
                     .frame(width: 20, height: 40)
                     .offset(y: radius - 20)
                     .shadow(color: .yellow.opacity(0.8), radius: 5)
                     .rotationEffect(.degrees(180))
+//                Triangle()
+//                    .fill(Color.white)
+//                    .frame(width: 20, height: 40)
+//                    .offset(y: -radius - 20)
+//                    .shadow(color: .yellow.opacity(0.8), radius: 5)
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
+            .scaleEffect(pulseScale)
+            .onAppear {
+                withAnimation(Animation.easeInOut(duration: 1.2).repeatForever(autoreverses: true)) {
+                    pulseScale = 1.05
+                }
+            }
         }
     }
 }

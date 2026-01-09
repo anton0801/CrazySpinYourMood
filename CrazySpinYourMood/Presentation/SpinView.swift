@@ -8,7 +8,7 @@ struct SpinView: View {
     @State private var showResult: Bool = false
     @State private var confetti: Int = 0
     
-    let moods: [Mood] = [.happy, .calm, .focused, .tired, .stressed, .excited]
+    let moods: [Mood] = defaultMoods // [.happy, .calm, .focused, .tired, .stressed, .excited]
     
     var body: some View {
         NavigationView {

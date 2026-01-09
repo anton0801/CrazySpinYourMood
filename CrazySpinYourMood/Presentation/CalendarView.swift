@@ -35,7 +35,7 @@ struct CalendarView: View {
     func getMoodColor(for date: Date) -> Color? {
         let history = loadHistory()
         if let entry = history.first(where: { Calendar.current.isDate($0.date, inSameDayAs: date) }) {
-            return entry.mood.color
+            return entry.mood.swiftColor
         }
         return nil
     }

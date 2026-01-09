@@ -17,7 +17,7 @@ struct MoodResultView: View {
                 
                 Text(mood.name)
                     .font(.title)
-                    .foregroundColor(mood.color)
+                    .foregroundColor(mood.swiftColor)
                 
                 Text(mood.advice)
                     .font(.body)

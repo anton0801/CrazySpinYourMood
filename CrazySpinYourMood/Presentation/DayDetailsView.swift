@@ -24,7 +24,7 @@ struct DayDetailsView: View {
             
             Text(entry.mood.name)
                 .font(.title2)
-                .foregroundColor(entry.mood.color)
+                .foregroundColor(entry.mood.swiftColor)
             
             TextEditor(text: $note)
                 .frame(height: 150)
